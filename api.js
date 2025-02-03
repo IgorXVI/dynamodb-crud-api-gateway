@@ -186,3 +186,11 @@ const getAllPost = async (event) => {
 
     return response
 }
+
+module.exports = {
+    getPost,
+    createPost,
+    updatePost,
+    deletePost,
+    getAllPost,
+}
