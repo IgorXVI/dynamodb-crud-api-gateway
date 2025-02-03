@@ -4,14 +4,18 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev-deploy": "serverless deploy"
+        "deploy": "serverless deploy",
+        "aws-purge": "serverless remove"
     },
     "author": "",
     "license": "ISC",
     "description": "",
     "dependencies": {
         "@aws-sdk/client-dynamodb": "^3.738.0",
-        "@aws-sdk/util-dynamodb": "^3.738.0",
-        "serverless-iam-roles-per-function": "^3.0.0-5593c96"
+        "@aws-sdk/util-dynamodb": "^3.738.0"
+    },
+    "devDependencies": {
+        "serverless-add-api-key": "^4.2.1",
+        "serverless-iam-roles-per-function": "^3.2.0"
     }
 }

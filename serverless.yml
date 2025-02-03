@@ -13,10 +13,14 @@ provider:
         DDB_TABLE_NAME: ${self:custom.postsTableName}
 
 custom:
+    apiKeys:
+        - name: dynamodb-crud-api-key
+
     postsTableName: posts-table-${self:provider.stage}
 
 plugins:
     - serverless-iam-roles-per-function
+    - serverless-add-api-key
 
 functions:
     getPost:
@@ -28,6 +32,7 @@ functions:
             - http:
                   path: post/{postId}
                   method: GET
+                  private: true
         iamRoleStatements:
             - Effect: "Allow"
               Action:
@@ -43,6 +48,7 @@ functions:
             - http:
                   path: post
                   method: POST
+                  private: true
         iamRoleStatements:
             - Effect: "Allow"
               Action:
@@ -58,6 +64,7 @@ functions:
             - http:
                   path: post/{postId}
                   method: PUT
+                  private: true
         iamRoleStatements:
             - Effect: "Allow"
               Action:
@@ -73,6 +80,7 @@ functions:
             - http:
                   path: post/{postId}
                   method: DELETE
+                  private: true
         iamRoleStatements:
             - Effect: "Allow"
               Action:
@@ -88,6 +96,7 @@ functions:
             - http:
                   path: post
                   method: GET
+                  private: true
         iamRoleStatements:
             - Effect: "Allow"
               Action:
