@@ -8,8 +8,35 @@ const z = require("zod")
 
 const { v4: uuidv4 } = require("uuid")
 
-const today = new Date()
-const past = new Date("01-01-1899")
+const errorHandlingWrapper = (fun) => async (event) => {
+    try {
+        const normalResponse = await fun(event)
+        return normalResponse
+    } catch (e) {
+        console.error(e)
+
+        const errorResponse = {}
+
+        errorResponse.statusCode = 500
+
+        errorResponse.body = JSON.stringify({
+            success: false,
+            errorMessage: e.message ? e.message : "Error has no message!",
+            errorStack: e.stack ? e.stack : "Error has no stack!",
+        })
+
+        return errorResponse
+    }
+}
+
+const makeValidationErrorResponse = (errorMessage, details) => ({
+    statusCode: 400,
+    body: JSON.stringify({
+        success: false,
+        errorMessage,
+        details,
+    }),
+})
 
 const customerValidationSchema = z.object({
     fullName: z.string().max(1000),
@@ -45,67 +72,47 @@ const customerValidationSchema = z.object({
         .nonempty(),
 })
 
-const errorHandlingWrapper = (fun) => async (event) => {
-    try {
-        const normalResponse = await fun(event)
-        return normalResponse
-    } catch (e) {
-        console.error(e)
-
-        const errorResponse = {}
-
-        errorResponse.statusCode = 500
-
-        errorResponse.body = JSON.stringify({
-            success: false,
-            errorMessage: e.message ? e.message : "Error has no message!",
-            errorStack: e.stack ? e.stack : "Error has no stack!",
-        })
-
-        return errorResponse
-    }
-}
+const today = new Date()
+const past = new Date("01-01-1899")
 
 const createCustomer = errorHandlingWrapper(async (event) => {
-    const response = { statusCode: 200 }
-
     const body = JSON.parse(event.body)
 
     const validationResult = customerValidationSchema.safeParse(body)
 
     if (!validationResult.success) {
-        response.statusCode = 400
-        response.body = JSON.stringify({
-            success: false,
-            errorMessage: validationResult.error.issues[0]?.message ?? "Validation failed",
-            issues: validationResult.error.issues,
-        })
-
-        return response
+        return makeValidationErrorResponse(
+            validationResult.error.issues[0]?.message ?? "Validation failed",
+            validationResult.error.issues
+        )
     }
 
     const birthdayDate = new Date(body.birthday)
 
     if (birthdayDate.getTime() < past.getTime()) {
-        response.statusCode = 400
-        response.body = JSON.stringify({
-            success: false,
-            errorMessage: "Bithday date is too old.",
-            value: body.birthday,
-        })
-
-        return response
+        return makeValidationErrorResponse("Bithday date is too old.", { value: body.birthday })
     }
 
     if (today.getTime() < birthdayDate.getTime()) {
-        response.statusCode = 400
-        response.body = JSON.stringify({
-            success: false,
-            errorMessage: "Bithday date must be in the past.",
-            value: body.birthday,
-        })
+        return makeValidationErrorResponse("Bithday date must be in the past.", { value: body.birthday })
+    }
 
-        return response
+    const countMains = (arr = []) => arr.reduce((acc, e) => (e.isMain ? acc + 1 : acc), 0)
+
+    const mainEmailCount = countMains(body.emailAddresses)
+    if (mainEmailCount !== 1) {
+        return makeValidationErrorResponse("Must have one main email.", {
+            value: body.emailAddresses,
+            count: mainEmailCount,
+        })
+    }
+
+    const mainPhoneNumberCount = countMains(body.phoneNumbers)
+    if (mainPhoneNumberCount !== 1) {
+        return makeValidationErrorResponse("Must have one main phone number.", {
+            value: body.phoneNumbers,
+            count: mainPhoneNumberCount,
+        })
     }
 
     body.id = uuidv4()
@@ -120,17 +127,16 @@ const createCustomer = errorHandlingWrapper(async (event) => {
 
     console.log("Customer created!")
 
-    response.body = JSON.stringify({
-        success: true,
-        id: body.id,
-    })
-
-    return response
+    return {
+        statusCode: 200,
+        body: JSON.stringify({
+            success: true,
+            id: body.id,
+        }),
+    }
 })
 
 const getAllCustomers = errorHandlingWrapper(async () => {
-    const response = { statusCode: 200 }
-
     const params = {
         TableName: process.env.DDB_TABLE_NAME,
     }
@@ -139,15 +145,16 @@ const getAllCustomers = errorHandlingWrapper(async () => {
 
     console.log("Customers scanned!")
 
-    response.body = JSON.stringify({
-        success: true,
-        data: {
-            count: Count,
-            items: Items.map(unmarshall),
-        },
-    })
-
-    return response
+    return {
+        statusCode: 200,
+        body: JSON.stringify({
+            success: true,
+            data: {
+                count: Count,
+                items: Items.map(unmarshall),
+            },
+        }),
+    }
 })
 
 module.exports = {
