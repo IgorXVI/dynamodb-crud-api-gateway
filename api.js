@@ -1,202 +1,129 @@
 const db = require("./db")
 
-const {
-    GetItemCommand,
-    PutItemCommand,
-    UpdateItemCommand,
-    DeleteItemCommand,
-    ScanCommand,
-} = require("@aws-sdk/client-dynamodb")
+const { PutItemCommand, ScanCommand } = require("@aws-sdk/client-dynamodb")
 
 const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb")
 
-const getPost = async (event) => {
-    const response = { statusCode: 200 }
+const z = require("zod")
 
+const { v4: uuidv4 } = require("uuid")
+
+const customerValidationSchema = z.object({
+    fullName: z.string().max(1000),
+    birthday: z.string().date(),
+    active: z.boolean(),
+    addresses: z
+        .array(
+            z.object({
+                postalCode: z.string().max(8),
+                state: z.string().max(2),
+                city: z.string().max(1000),
+                neighborhood: z.string().max(1000),
+                street: z.string().max(1000),
+                streetNumber: z.number().min(1),
+                complement: z.string().max(1000).optional(),
+            })
+        )
+        .nonempty(),
+    emailAddresses: z
+        .array(
+            z.object({
+                email: z.string().email(),
+                isMain: z.boolean(),
+            })
+        )
+        .nonempty(),
+    phoneNumbers: z
+        .array(
+            z.object({
+                phoneNumber: z.string().max(1000),
+                isMain: z.boolean(),
+            })
+        )
+        .nonempty(),
+})
+
+const errorHandlingWrapper = (fun) => async (event) => {
     try {
-        const params = {
-            TableName: process.env.DDB_TABLE_NAME,
-            Key: marshall({ postId: event.pathParameters.postId }),
-        }
-
-        const { Item } = await db.send(new GetItemCommand(params))
-
-        console.log("Item retrieved!")
-
-        response.body = JSON.stringify({
-            success: true,
-            data: Item ? unmarshall(Item) : null,
-            rawData: Item,
-        })
+        const normalResponse = await fun(event)
+        return normalResponse
     } catch (e) {
         console.error(e)
 
-        response.statusCode = 500
+        const errorResponse = {}
 
-        response.body = JSON.stringify({
+        errorResponse.statusCode = 500
+
+        errorResponse.body = JSON.stringify({
             success: false,
             errorMessage: e.message ? e.message : "Error has no message!",
             errorStack: e.stack ? e.stack : "Error has no stack!",
         })
-    }
 
-    return response
+        return errorResponse
+    }
 }
 
-const createPost = async (event) => {
+const createCustomer = errorHandlingWrapper(async (event) => {
     const response = { statusCode: 200 }
 
-    try {
-        const body = JSON.parse(event.body)
-        const params = {
-            TableName: process.env.DDB_TABLE_NAME,
-            Item: marshall(body),
-        }
+    const body = JSON.parse(event.body)
 
-        const createResult = await db.send(new PutItemCommand(params))
+    const validationResult = customerValidationSchema.safeParse(body)
 
-        console.log("Item created!")
-
-        response.body = JSON.stringify({
-            success: true,
-            createResult,
-        })
-    } catch (e) {
-        console.error(e)
-
-        response.statusCode = 500
-
+    if (!validationResult.success) {
+        response.statusCode = 400
         response.body = JSON.stringify({
             success: false,
-            errorMessage: e.message ? e.message : "Error has no message!",
-            errorStack: e.stack ? e.stack : "Error has no stack!",
+            errorMessage: validationResult.error.issues[0]?.message ?? "Validation failed",
+            issues: validationResult.error.issues,
         })
+
+        return response
     }
 
-    return response
-}
+    body.id = uuidv4()
 
-const updatePost = async (event) => {
+    const params = {
+        TableName: process.env.DDB_TABLE_NAME,
+        Item: marshall(body),
+    }
+
+    await db.send(new PutItemCommand(params))
+
+    console.log("Customer created!")
+
+    response.body = JSON.stringify({
+        success: true,
+        id: body.id,
+    })
+
+    return response
+})
+
+const getAllCustomers = errorHandlingWrapper(async () => {
     const response = { statusCode: 200 }
 
-    try {
-        const body = JSON.parse(event.body)
-        const objKeys = Object.keys(body)
-        const params = {
-            TableName: process.env.DDB_TABLE_NAME,
-            Key: marshall({ postId: event.pathParameters.postId }),
-            UpdateExpression: `SET ${objKeys.map((_, index) => `#key${index} = :value${index}`).join(", ")}`,
-            ExpressionAttributeNames: objKeys.reduce(
-                (acc, key, index) => ({
-                    ...acc,
-                    [`#key${index}`]: key,
-                }),
-                {}
-            ),
-            ExpressionAttributeValues: marshall(
-                objKeys.reduce(
-                    (acc, key, index) => ({
-                        ...acc,
-                        [`:value${index}`]: body[key],
-                    }),
-                    {}
-                )
-            ),
-        }
-
-        const updateResult = await db.send(new UpdateItemCommand(params))
-
-        console.log("Item updated!")
-
-        response.body = JSON.stringify({
-            success: true,
-            updateResult,
-        })
-    } catch (e) {
-        console.error(e)
-
-        response.statusCode = 500
-
-        response.body = JSON.stringify({
-            success: false,
-            errorMessage: e.message ? e.message : "Error has no message!",
-            errorStack: e.stack ? e.stack : "Error has no stack!",
-        })
+    const params = {
+        TableName: process.env.DDB_TABLE_NAME,
     }
 
-    return response
-}
+    const { Items, Count } = await db.send(new ScanCommand(params))
 
-const deletePost = async (event) => {
-    const response = { statusCode: 200 }
+    console.log("Customers scanned!")
 
-    try {
-        const params = {
-            TableName: process.env.DDB_TABLE_NAME,
-            Key: marshall({ postId: event.pathParameters.postId }),
-        }
-
-        const deleteResult = await db.send(new DeleteItemCommand(params))
-
-        console.log("Item deleted!")
-
-        response.body = JSON.stringify({
-            success: true,
-            deleteResult,
-        })
-    } catch (e) {
-        console.error(e)
-
-        response.statusCode = 500
-
-        response.body = JSON.stringify({
-            success: false,
-            errorMessage: e.message ? e.message : "Error has no message!",
-            errorStack: e.stack ? e.stack : "Error has no stack!",
-        })
-    }
+    response.body = JSON.stringify({
+        success: true,
+        data: {
+            count: Count,
+            items: Items.map(unmarshall),
+        },
+    })
 
     return response
-}
-
-const getAllPost = async (event) => {
-    const response = { statusCode: 200 }
-
-    try {
-        const params = {
-            TableName: process.env.DDB_TABLE_NAME,
-        }
-
-        const { Items, Count } = await db.send(new ScanCommand(params))
-
-        console.log("Items scanned!")
-
-        response.body = JSON.stringify({
-            success: true,
-            data: {
-                count: Count,
-                items: Items.map(unmarshall),
-            },
-        })
-    } catch (e) {
-        console.error(e)
-
-        response.statusCode = 500
-
-        response.body = JSON.stringify({
-            success: false,
-            errorMessage: e.message ? e.message : "Error has no message!",
-            errorStack: e.stack ? e.stack : "Error has no stack!",
-        })
-    }
-
-    return response
-}
+})
 
 module.exports = {
-    getPost,
-    createPost,
-    updatePost,
-    deletePost,
-    getAllPost,
+    createCustomer,
+    getAllCustomers,
 }
