@@ -4,8 +4,9 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "deploy": "serverless deploy",
-        "aws-purge": "serverless remove"
+        "deploy": "npx sls deploy",
+        "aws-purge": "npx sls remove",
+        "dev": "npx sls offline start"
     },
     "author": "",
     "license": "ISC",
@@ -15,7 +16,10 @@
         "@aws-sdk/util-dynamodb": "^3.738.0"
     },
     "devDependencies": {
+        "serverless": "^4.6.1",
         "serverless-add-api-key": "^4.2.1",
-        "serverless-iam-roles-per-function": "^3.2.0"
+        "serverless-dynamodb": "^0.2.56",
+        "serverless-iam-roles-per-function": "^3.2.0",
+        "serverless-offline": "^14.4.0"
     }
 }

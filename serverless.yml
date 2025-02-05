@@ -13,6 +13,16 @@ provider:
         DDB_TABLE_NAME: ${self:custom.postsTableName}
 
 custom:
+    dynamodb:
+        stages:
+            - dev
+        start:
+            migrate: true
+
+    # HTTP proxy config
+    # serverless-offline:
+    #     resourceRoutes: true
+
     apiKeys:
         - name: dynamodb-crud-api-key
 
@@ -21,6 +31,8 @@ custom:
 plugins:
     - serverless-iam-roles-per-function
     - serverless-add-api-key
+    - serverless-dynamodb
+    - serverless-offline
 
 functions:
     getPost:

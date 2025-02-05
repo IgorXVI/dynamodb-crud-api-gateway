@@ -3,5 +3,5 @@
     "useTabs": false,
     "semi": false,
     "singleAttributePerLine": true,
-    "printWidth": 150
+    "printWidth": 125
 }

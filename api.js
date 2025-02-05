@@ -1,6 +1,12 @@
 const db = require("./db")
 
-const { GetItemCommand, PutItemCommand, UpdateItemCommand, DeleteItemCommand, ScanCommand } = require("@aws-sdk/client-dynamodb")
+const {
+    GetItemCommand,
+    PutItemCommand,
+    UpdateItemCommand,
+    DeleteItemCommand,
+    ScanCommand,
+} = require("@aws-sdk/client-dynamodb")
 
 const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb")
 
