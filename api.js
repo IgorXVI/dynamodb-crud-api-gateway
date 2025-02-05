@@ -14,7 +14,6 @@ const past = new Date("01-01-1899")
 const customerValidationSchema = z.object({
     fullName: z.string().max(1000),
     birthday: z.string().date(),
-    active: z.boolean(),
     addresses: z
         .array(
             z.object({
@@ -110,6 +109,7 @@ const createCustomer = errorHandlingWrapper(async (event) => {
     }
 
     body.id = uuidv4()
+    body.active = true
 
     const params = {
         TableName: process.env.DDB_TABLE_NAME,
