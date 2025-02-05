@@ -8,6 +8,9 @@ const z = require("zod")
 
 const { v4: uuidv4 } = require("uuid")
 
+const today = new Date()
+const past = new Date("01-01-1899")
+
 const customerValidationSchema = z.object({
     fullName: z.string().max(1000),
     birthday: z.string().date(),
@@ -77,6 +80,30 @@ const createCustomer = errorHandlingWrapper(async (event) => {
             success: false,
             errorMessage: validationResult.error.issues[0]?.message ?? "Validation failed",
             issues: validationResult.error.issues,
+        })
+
+        return response
+    }
+
+    const birthdayDate = new Date(body.birthday)
+
+    if (birthdayDate.getTime() < past.getTime()) {
+        response.statusCode = 400
+        response.body = JSON.stringify({
+            success: false,
+            errorMessage: "Bithday date is too old.",
+            value: body.birthday,
+        })
+
+        return response
+    }
+
+    if (today.getTime() < birthdayDate.getTime()) {
+        response.statusCode = 400
+        response.body = JSON.stringify({
+            success: false,
+            errorMessage: "Bithday date must be in the past.",
+            value: body.birthday,
         })
 
         return response
