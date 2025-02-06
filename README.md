@@ -15,6 +15,7 @@
 Abaixo serão listados os comandos para executar os testes, para os testes de integração é necessário ter o servidor de dev local rodando (siga o "Setup do ambiente local").
 Os comandos de teste são:
 
+-   Todos os testes com cobertura: `npm run test`
 -   Testes unitários: `npm run unit-test`
 -   Testes unitários com cobertura: `npm run unit-test-coverage`
 -   Testes de integração: `npm run integration-test`

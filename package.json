@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "main": "index.js",
     "scripts": {
-        "test": "npx jest",
+        "test": "npx jest --coverage",
         "unit-test": "npx jest unit",
         "unit-test-coverage": "npx jest unit --coverage",
         "integration-test": "npx jest integration",
