@@ -5,7 +5,7 @@ export class CustomerController {
         this.customerService = customerService
     }
 
-    handleError(e: unknown) {
+    private handleError(e: unknown) {
         console.error(e)
 
         const body = JSON.stringify({
