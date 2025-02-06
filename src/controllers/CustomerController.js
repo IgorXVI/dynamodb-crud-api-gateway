@@ -31,7 +31,7 @@ class CustomerController {
                 body: JSON.stringify(result),
             }
         } catch (e) {
-            this.handleError(e)
+            return this.handleError(e)
         }
     }
 
@@ -44,7 +44,7 @@ class CustomerController {
                 body: JSON.stringify(result),
             }
         } catch (e) {
-            this.handleError(e)
+            return this.handleError(e)
         }
     }
 }
