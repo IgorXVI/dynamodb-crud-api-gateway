@@ -36,7 +36,7 @@ const correctBody = {
 }
 
 describe("Customer routes tests", () => {
-    test("should create a new user", async () => {
+    test("should create a new customer", async () => {
         const res = await fetch("http://localhost:3000/dev/customer", {
             method: "POST",
             headers: {
@@ -49,5 +49,22 @@ describe("Customer routes tests", () => {
 
         expect(resBody.success).toEqual(true)
         expect(typeof resBody.data.id).toEqual("string")
+    })
+
+    test("should get all customers", async () => {
+        const res = await fetch("http://localhost:3000/dev/customer", {
+            method: "GET",
+            headers: {
+                "x-api-key": "d41d8cd98f00b204e9800998ecf8427e",
+            },
+        })
+
+        const resBody = await res.json()
+
+        expect(resBody.success).toEqual(true)
+
+        delete resBody.data.items[0].id
+
+        expect(resBody.data.items[0]).toEqual(correctBody)
     })
 })
