@@ -1,18 +1,18 @@
-const { v4: uuidv4 } = require("uuid")
-const { marshall, unmarshall } = require("@aws-sdk/util-dynamodb")
-const { PutItemCommand, ScanCommand } = require("@aws-sdk/client-dynamodb")
+import { v4 as uuidv4 } from "uuid"
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb"
+import { PutItemCommand, ScanCommand } from "@aws-sdk/client-dynamodb"
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb"
 
-const dbClient = require("../db/client")
+import { dbClient } from "../db/client"
 
-class CustomerRepository {
+export class CustomerRepository {
+    private db: DynamoDBClient
+
     constructor() {
         this.db = dbClient
-
-        this.create = this.create.bind(this)
-        this.getAll = this.getAll.bind(this)
     }
 
-    async create(body) {
+    async create(body: any) {
         body.id = uuidv4()
         body.active = true
 
@@ -42,9 +42,7 @@ class CustomerRepository {
 
         return {
             count: Count,
-            items: Items.map(unmarshall),
+            items: Items?.map((item) => unmarshall(item)),
         }
     }
 }
-
-module.exports = { CustomerRepository }

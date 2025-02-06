@@ -1,28 +1,25 @@
-class CustomerController {
-    constructor(customerService) {
-        this.customerService = customerService
+import { CustomerService } from "src/services/CustomerService"
 
-        this.handleError = this.handleError.bind(this)
-        this.create = this.create.bind(this)
-        this.getAll = this.getAll.bind(this)
+export class CustomerController {
+    constructor(private customerService: CustomerService) {
+        this.customerService = customerService
     }
 
-    handleError(e) {
+    handleError(e: unknown) {
         console.error(e)
 
-        const errorResponse = {}
-
-        errorResponse.statusCode = 500
-
-        errorResponse.body = JSON.stringify({
+        const body = JSON.stringify({
             success: false,
-            errorMessage: e.message ? e.message : "Error has no message!",
+            errorMessage: e instanceof Error && e.message ? e.message : "Error has no message!",
         })
 
-        return errorResponse
+        return {
+            statusCode: 500,
+            body,
+        }
     }
 
-    async create(event) {
+    async create(event: { body: string }) {
         try {
             const body = JSON.parse(event.body)
 
@@ -52,5 +49,3 @@ class CustomerController {
         }
     }
 }
-
-module.exports = { CustomerController }
