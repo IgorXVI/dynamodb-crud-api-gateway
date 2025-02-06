@@ -6,6 +6,7 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "deploy": "npx sls deploy",
         "aws-purge": "npx sls remove",
+        "compile": "tsc --watch",
         "dev": "npx sls offline start"
     },
     "author": "",
@@ -23,6 +24,7 @@
         "serverless-add-api-key": "^4.2.1",
         "serverless-dynamodb": "^0.2.56",
         "serverless-iam-roles-per-function": "^3.2.0",
-        "serverless-offline": "^14.4.0"
+        "serverless-offline": "^14.4.0",
+        "typescript": "^5.7.3"
     }
 }

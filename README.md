@@ -6,4 +6,6 @@
 
 3 - `npx sls dynamodb install`
 
-4 - `npm run dev`
+4 - `npx tsc`
+
+5 - `npm run dev`

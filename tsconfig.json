@@ -1,41 +1,21 @@
 {
     "compilerOptions": {
-        /* Base Options: */
-        "esModuleInterop": true,
-        "skipLibCheck": true,
-        "target": "es2022",
-        "allowJs": true,
-        "resolveJsonModule": true,
-        "moduleDetection": "force",
-        "isolatedModules": true,
+        /* Visit https://aka.ms/tsconfig to read more about this file */
 
-        /* Strictness */
-        "strict": true,
-        "noUncheckedIndexedAccess": true,
-        "checkJs": true,
+        /* Language and Environment */
+        "target": "es2016" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
 
-        /* Bundled projects */
-        "lib": ["dom", "dom.iterable", "ES2022"],
-        "noEmit": true,
-        "module": "ESNext",
-        "moduleResolution": "Bundler",
-        "jsx": "preserve",
-        "incremental": true,
+        /* Modules */
+        "module": "commonjs" /* Specify what module code is generated. */,
+        "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
+        "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
 
-        /* Path Aliases */
-        "baseUrl": ".",
-        "paths": {
-            "~/*": ["./src/*"]
-        }
+        /* Type Checking */
+        "strict": true /* Enable all strict type-checking options. */,
+        "skipLibCheck": true /* Skip type checking all .d.ts files. */,
+
+        "outDir": "dist"
     },
-    "include": [
-        ".eslintrc.cjs",
-        "next-env.d.ts",
-        "**/*.ts",
-        "**/*.tsx",
-        "**/*.cjs",
-        "**/*.js",
-        ".next/types/**/*.ts"
-    ],
-    "exclude": ["node_modules", ".serverless", ".dynamodb", "undefined"]
+    "include": ["**/*.ts", "**/*.tsx"],
+    "exclude": ["dist", "node_modules", ".serverless", ".dynamodb", "undefined"]
 }

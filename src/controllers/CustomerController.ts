@@ -1,4 +1,4 @@
-import { CustomerService } from "src/services/CustomerService"
+import { CustomerService } from "../services/CustomerService"
 
 export class CustomerController {
     constructor(private customerService: CustomerService) {

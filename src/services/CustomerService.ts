@@ -1,6 +1,6 @@
 import z from "zod"
 
-import { CustomerRepository } from "src/repositories/CustomerRepository"
+import { CustomerRepository } from "../repositories/CustomerRepository"
 
 export class CustomerService {
     private validationSchema = z.object({
