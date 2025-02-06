@@ -9,4 +9,7 @@ const customerController = new CustomerController(customerService)
 module.exports = {
     createCustomer: customerController.create.bind(customerController),
     getAllCustomers: customerController.getAll.bind(customerController),
+    updateCustomer: customerController.update.bind(customerController),
+    deleteCustomer: customerController.deleteOne.bind(customerController),
+    getOneCustomer: customerController.getOne.bind(customerController),
 }

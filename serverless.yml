@@ -67,6 +67,54 @@ functions:
                   - "dynamodb:Scan"
               Resource: !GetAtt CustomersTable.Arn
 
+    updateCustomer:
+        handler: api.updateCustomer
+        name: updateCustomer
+        memorySize: 128
+        timeout: 5
+        events:
+            - http:
+                  path: customer/{id}
+                  method: PUT
+                  private: true
+        iamRoleStatements:
+            - Effect: "Allow"
+              Action:
+                  - "dynamodb:PutItem"
+              Resource: !GetAtt CustomersTable.Arn
+
+    deleteCustomer:
+        handler: api.deleteCustomer
+        name: deleteCustomer
+        memorySize: 128
+        timeout: 5
+        events:
+            - http:
+                  path: customer/{id}
+                  method: DELETE
+                  private: true
+        iamRoleStatements:
+            - Effect: "Allow"
+              Action:
+                  - "dynamodb:PutItem"
+              Resource: !GetAtt CustomersTable.Arn
+
+    getOneCustomer:
+        handler: api.getOneCustomer
+        name: getOneCustomer
+        memorySize: 128
+        timeout: 5
+        events:
+            - http:
+                  path: customer/{id}
+                  method: GET
+                  private: true
+        iamRoleStatements:
+            - Effect: "Allow"
+              Action:
+                  - "dynamodb:PutItem"
+              Resource: !GetAtt CustomersTable.Arn
+
 resources:
     Resources:
         CustomersTable:

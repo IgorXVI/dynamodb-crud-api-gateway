@@ -41,7 +41,7 @@ export class CustomerService {
         this.customerRepository = customerRepository
     }
 
-    async create(inputBody: unknown) {
+    private validateBody(inputBody: unknown) {
         const validationResult = this.validationSchema.safeParse(inputBody)
 
         if (!validationResult.success) {
@@ -102,7 +102,20 @@ export class CustomerService {
             }
         }
 
-        const id = await this.customerRepository.create(body)
+        return {
+            success: true,
+            data: validationResult.data,
+        }
+    }
+
+    async create(inputBody: unknown) {
+        const validationResult = this.validateBody(inputBody)
+
+        if (!validationResult.success) {
+            return validationResult
+        }
+
+        const id = await this.customerRepository.create(validationResult.data)
 
         return {
             success: true,
@@ -112,12 +125,53 @@ export class CustomerService {
         }
     }
 
+    async update(id: string, inputBody: unknown) {
+        const validationResult = this.validateBody(inputBody)
+
+        if (!validationResult.success) {
+            return validationResult
+        }
+
+        await this.customerRepository.update(id, validationResult.data)
+
+        return {
+            success: true,
+        }
+    }
+
     async getAll() {
         const data = await this.customerRepository.getAll()
 
         return {
             success: true,
             data,
+        }
+    }
+
+    async getOne(id: string) {
+        const data = await this.customerRepository.getOne(id)
+
+        if (!data) {
+            return {
+                success: false,
+                errorMessage: "Customer not found.",
+                details: {
+                    id,
+                },
+            }
+        }
+
+        return {
+            success: true,
+            data,
+        }
+    }
+
+    async deleteOne(id: string) {
+        await this.customerRepository.softDeleteOne(id)
+
+        return {
+            success: true,
         }
     }
 }

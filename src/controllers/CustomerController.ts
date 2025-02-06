@@ -36,9 +36,57 @@ export class CustomerController {
         }
     }
 
+    async update(event: { body: string; pathParameters: { id: string } }) {
+        try {
+            const id = event.pathParameters.id
+            const body = JSON.parse(event.body)
+
+            const result = await this.customerService.update(id, body)
+
+            const statusCode = result.success ? 200 : 400
+
+            return {
+                statusCode,
+                body: JSON.stringify(result),
+            }
+        } catch (e) {
+            return this.handleError(e)
+        }
+    }
+
     async getAll() {
         try {
             const result = await this.customerService.getAll()
+
+            return {
+                statusCode: 200,
+                body: JSON.stringify(result),
+            }
+        } catch (e) {
+            return this.handleError(e)
+        }
+    }
+
+    async getOne(event: { pathParameters: { id: string } }) {
+        try {
+            const id = event.pathParameters.id
+
+            const result = await this.customerService.getOne(id)
+
+            return {
+                statusCode: !result.success ? 404 : 200,
+                body: JSON.stringify(result),
+            }
+        } catch (e) {
+            return this.handleError(e)
+        }
+    }
+
+    async deleteOne(event: { pathParameters: { id: string } }) {
+        try {
+            const id = event.pathParameters.id
+
+            const result = await this.customerService.deleteOne(id)
 
             return {
                 statusCode: 200,
