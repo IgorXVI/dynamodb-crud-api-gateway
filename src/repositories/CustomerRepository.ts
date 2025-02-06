@@ -13,10 +13,9 @@ export class CustomerRepository {
     }
 
     async create(body: any) {
-        body.id = uuidv4()
-        body.active = true
+        const id = uuidv4()
 
-        body.id = uuidv4()
+        body.id = id
         body.active = true
 
         const params = {
@@ -28,7 +27,7 @@ export class CustomerRepository {
 
         console.log("Customer created!")
 
-        return body.id
+        return id
     }
 
     async getAll() {
