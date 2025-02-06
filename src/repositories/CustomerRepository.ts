@@ -13,6 +13,10 @@ export class CustomerRepository {
     }
 
     async update(id: string, body: any) {
+        if (body.active !== false) {
+            body.active = true
+        }
+
         const objKeys = Object.keys(body)
         const params = {
             TableName: process.env.DDB_TABLE_NAME,

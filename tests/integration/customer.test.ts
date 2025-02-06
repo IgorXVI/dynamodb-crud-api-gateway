@@ -124,4 +124,33 @@ describe("Customer routes tests", () => {
         expect(resBody.success).toEqual(false)
         expect(resBody.errorMessage).toEqual("Customer not found.")
     })
+
+    test("should create a new customer by PUT", async () => {
+        const res = await fetch("http://localhost:3000/dev/customer/1", {
+            method: "PUT",
+            headers: {
+                "x-api-key": "d41d8cd98f00b204e9800998ecf8427e",
+            },
+            body: JSON.stringify(correctBody),
+        })
+
+        const resBody = await res.json()
+
+        expect(resBody.success).toEqual(true)
+
+        const resGet = await fetch("http://localhost:3000/dev/customer/1", {
+            method: "GET",
+            headers: {
+                "x-api-key": "d41d8cd98f00b204e9800998ecf8427e",
+            },
+        })
+
+        const resGetBody = await resGet.json()
+
+        expect(resGetBody.success).toEqual(true)
+        expect(resGetBody.data).toEqual({
+            ...correctBody,
+            id: "1",
+        })
+    })
 })
