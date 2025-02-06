@@ -121,6 +121,7 @@ describe("Customer routes tests", () => {
 
         const resBody = await res.json()
 
+        expect(res.status).toEqual(404)
         expect(resBody.success).toEqual(false)
         expect(resBody.errorMessage).toEqual("Customer not found.")
     })
@@ -136,6 +137,7 @@ describe("Customer routes tests", () => {
 
         const resBody = await res.json()
 
+        expect(res.status).toEqual(404)
         expect(resBody.success).toEqual(false)
         expect(resBody.errorMessage).toEqual("Customer not found.")
         expect(resBody.details as any).toEqual({
@@ -151,6 +153,7 @@ describe("Customer routes tests", () => {
 
         const resGetBody = await resGet.json()
 
+        expect(resGet.status).toEqual(404)
         expect(resGetBody.success).toEqual(false)
         expect(resGetBody.errorMessage).toEqual("Customer not found.")
         expect(resGetBody.details as any).toEqual({
@@ -166,6 +169,7 @@ describe("Customer routes tests", () => {
 
         const resDeleteBody = await resDelete.json()
 
+        expect(resDelete.status).toEqual(404)
         expect(resDeleteBody.success).toEqual(false)
         expect(resDeleteBody.errorMessage).toEqual("Customer not found.")
         expect(resDeleteBody.details as any).toEqual({

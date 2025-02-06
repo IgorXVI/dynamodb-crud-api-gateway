@@ -43,7 +43,7 @@ export class CustomerController {
 
             const result = await this.customerService.update(id, body)
 
-            const statusCode = result.success ? 200 : 400
+            const statusCode = result.success ? 200 : result.errorMessage === "Customer not found." ? 404 : 400
 
             return {
                 statusCode,
@@ -74,7 +74,7 @@ export class CustomerController {
             const result = await this.customerService.getOne(id)
 
             return {
-                statusCode: !result.success ? 404 : 200,
+                statusCode: result.errorMessage && result.errorMessage === "Customer not found." ? 404 : 200,
                 body: JSON.stringify(result),
             }
         } catch (e) {
@@ -89,7 +89,7 @@ export class CustomerController {
             const result = await this.customerService.deleteOne(id)
 
             return {
-                statusCode: 200,
+                statusCode: result.errorMessage && result.errorMessage === "Customer not found." ? 404 : 200,
                 body: JSON.stringify(result),
             }
         } catch (e) {
