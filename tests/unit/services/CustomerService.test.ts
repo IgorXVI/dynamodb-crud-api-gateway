@@ -43,7 +43,7 @@ describe("CustomerService tests", () => {
             create: async () => "123",
         } as any)
 
-        const result = await customerService.create(correctBody)
+        const result: any = await customerService.create(correctBody)
 
         expect(result).toEqual({
             success: true,
@@ -60,7 +60,7 @@ describe("CustomerService tests", () => {
 
         correctBody.fullName = 12345 as any
 
-        const result = await customerService.create(correctBody)
+        const result: any = await customerService.create(correctBody)
 
         correctBody.fullName = "Mickey Mouse"
 
@@ -84,7 +84,7 @@ describe("CustomerService tests", () => {
 
         correctBody.emailAddresses[0].isMain = false
 
-        const result = await customerService.create(correctBody)
+        const result: any = await customerService.create(correctBody)
 
         expect(result.success).toEqual(false)
         expect(result.errorMessage).toEqual("Must have one main email.")
@@ -99,7 +99,7 @@ describe("CustomerService tests", () => {
         correctBody.emailAddresses[0].isMain = true
         correctBody.emailAddresses[1].isMain = true
 
-        const result = await customerService.create(correctBody)
+        const result: any = await customerService.create(correctBody)
 
         correctBody.emailAddresses[0].isMain = true
         correctBody.emailAddresses[1].isMain = false
@@ -116,7 +116,7 @@ describe("CustomerService tests", () => {
 
         correctBody.phoneNumbers[1].isMain = false
 
-        const result = await customerService.create(correctBody)
+        const result: any = await customerService.create(correctBody)
 
         expect(result.success).toEqual(false)
         expect(result.errorMessage).toEqual("Must have one main phone number.")
@@ -131,7 +131,10 @@ describe("CustomerService tests", () => {
         correctBody.phoneNumbers[0].isMain = true
         correctBody.phoneNumbers[1].isMain = true
 
-        const result = await customerService.create(correctBody)
+        const result: any = await customerService.create(correctBody)
+
+        correctBody.phoneNumbers[0].isMain = true
+        correctBody.phoneNumbers[1].isMain = false
 
         expect(result.success).toEqual(false)
         expect(result.errorMessage).toEqual("Must have one main phone number.")
@@ -145,7 +148,7 @@ describe("CustomerService tests", () => {
 
         correctBody.birthday = "2100-01-01"
 
-        const result = await customerService.create(correctBody)
+        const result: any = await customerService.create(correctBody)
 
         expect(result.success).toEqual(false)
         expect(result.errorMessage).toEqual("Bithday date must be in the past.")
@@ -159,7 +162,9 @@ describe("CustomerService tests", () => {
 
         correctBody.birthday = "1899-01-01"
 
-        const result = await customerService.create(correctBody)
+        const result: any = await customerService.create(correctBody)
+
+        correctBody.birthday = "1999-01-01"
 
         expect(result.success).toEqual(false)
         expect(result.errorMessage).toEqual("Bithday date is too old.")
@@ -171,11 +176,84 @@ describe("CustomerService tests", () => {
             getAll: async () => [1, 2, 3, 4, 5],
         } as any)
 
-        const result = await customerService.getAll()
+        const result: any = await customerService.getAll()
 
         expect(result).toEqual({
             success: true,
             data: [1, 2, 3, 4, 5],
         })
+    })
+
+    test("should get one user", async () => {
+        const customerService = new CustomerService({
+            getOne: async (id: string) => "user " + id,
+        } as any)
+
+        const result: any = await customerService.getOne("123")
+
+        expect(result).toEqual({
+            success: true,
+            data: "user 123",
+        })
+    })
+
+    test("should get one non existing user", async () => {
+        const customerService = new CustomerService({
+            getOne: async () => null,
+        } as any)
+
+        const result: any = await customerService.getOne("123")
+
+        expect(result.success).toEqual(false)
+        expect(result.errorMessage).toEqual("Customer not found.")
+        expect((result.details as any)?.id).toEqual("123")
+    })
+
+    test("should delete one user", async () => {
+        const customerService = new CustomerService({
+            softDeleteOne: async () => null,
+        } as any)
+
+        const result: any = await customerService.deleteOne("123")
+
+        expect(result).toEqual({
+            success: true,
+        })
+    })
+
+    test("should update a user", async () => {
+        const customerService = new CustomerService({
+            update: async () => null,
+        } as any)
+
+        const result: any = await customerService.update("123", correctBody)
+
+        expect(result).toEqual({
+            success: true,
+        })
+    })
+
+    test("should return validation error on update", async () => {
+        const customerService = new CustomerService({
+            update: async () => null,
+        } as any)
+
+        correctBody.fullName = 12345 as any
+
+        const result: any = await customerService.update("123", correctBody)
+
+        correctBody.fullName = "Mickey Mouse"
+
+        expect(result.success).toEqual(false)
+        expect(result.errorMessage).toEqual("Expected string, received number")
+        expect(result.details as any).toEqual([
+            {
+                code: "invalid_type",
+                expected: "string",
+                message: "Expected string, received number",
+                path: ["fullName"],
+                received: "number",
+            },
+        ])
     })
 })
