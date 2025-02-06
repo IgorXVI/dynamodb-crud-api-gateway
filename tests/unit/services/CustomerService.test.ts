@@ -53,6 +53,30 @@ describe("CustomerService tests", () => {
         })
     })
 
+    test("should return validation error", async () => {
+        const customerService = new CustomerService({
+            create: async () => "123",
+        } as any)
+
+        correctBody.fullName = 12345 as any
+
+        const result = await customerService.create(correctBody)
+
+        correctBody.fullName = "Mickey Mouse"
+
+        expect(result.success).toEqual(false)
+        expect(result.errorMessage).toEqual("Expected string, received number")
+        expect(result.details as any).toEqual([
+            {
+                code: "invalid_type",
+                expected: "string",
+                message: "Expected string, received number",
+                path: ["fullName"],
+                received: "number",
+            },
+        ])
+    })
+
     test("should not create a new user when there is no main email", async () => {
         const customerService = new CustomerService({
             create: async () => "123",
@@ -77,8 +101,40 @@ describe("CustomerService tests", () => {
 
         const result = await customerService.create(correctBody)
 
+        correctBody.emailAddresses[0].isMain = true
+        correctBody.emailAddresses[1].isMain = false
+
         expect(result.success).toEqual(false)
         expect(result.errorMessage).toEqual("Must have one main email.")
+        expect((result.details as any)?.count).toEqual(2)
+    })
+
+    test("should not create a new user when there is no main phone number", async () => {
+        const customerService = new CustomerService({
+            create: async () => "123",
+        } as any)
+
+        correctBody.phoneNumbers[1].isMain = false
+
+        const result = await customerService.create(correctBody)
+
+        expect(result.success).toEqual(false)
+        expect(result.errorMessage).toEqual("Must have one main phone number.")
+        expect((result.details as any)?.count).toEqual(0)
+    })
+
+    test("should not create a new user when there is too many main phone numbers", async () => {
+        const customerService = new CustomerService({
+            create: async () => "123",
+        } as any)
+
+        correctBody.phoneNumbers[0].isMain = true
+        correctBody.phoneNumbers[1].isMain = true
+
+        const result = await customerService.create(correctBody)
+
+        expect(result.success).toEqual(false)
+        expect(result.errorMessage).toEqual("Must have one main phone number.")
         expect((result.details as any)?.count).toEqual(2)
     })
 
@@ -108,5 +164,18 @@ describe("CustomerService tests", () => {
         expect(result.success).toEqual(false)
         expect(result.errorMessage).toEqual("Bithday date is too old.")
         expect((result.details as any)?.value).toEqual("1899-01-01")
+    })
+
+    test("should get all users", async () => {
+        const customerService = new CustomerService({
+            getAll: async () => [1, 2, 3, 4, 5],
+        } as any)
+
+        const result = await customerService.getAll()
+
+        expect(result).toEqual({
+            success: true,
+            data: [1, 2, 3, 4, 5],
+        })
     })
 })
