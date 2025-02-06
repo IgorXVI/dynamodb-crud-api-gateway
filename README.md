@@ -1,5 +1,7 @@
 ### Setup do ambiente local
 
+Abrir o terminal na raíz do repositório e executar esses comandos (necessário ter nodejs e npm instalados):
+
 1 - `npm i`
 
 2 - `npx sls`
