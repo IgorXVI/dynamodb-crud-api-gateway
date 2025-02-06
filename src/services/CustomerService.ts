@@ -125,6 +125,15 @@ export class CustomerService {
         }
     }
 
+    async getAll() {
+        const data = await this.customerRepository.getAll()
+
+        return {
+            success: true,
+            data,
+        }
+    }
+
     async update(id: string, inputBody: unknown) {
         const validationResult = this.validateBody(inputBody)
 
@@ -132,15 +141,17 @@ export class CustomerService {
             return validationResult
         }
 
-        await this.customerRepository.update(id, validationResult.data)
+        const data = await this.customerRepository.update(id, validationResult.data)
 
-        return {
-            success: true,
+        if (data === null) {
+            return {
+                success: false,
+                errorMessage: "Customer not found.",
+                details: {
+                    id,
+                },
+            }
         }
-    }
-
-    async getAll() {
-        const data = await this.customerRepository.getAll()
 
         return {
             success: true,
@@ -168,10 +179,21 @@ export class CustomerService {
     }
 
     async deleteOne(id: string) {
-        await this.customerRepository.softDeleteOne(id)
+        const data = await this.customerRepository.softDeleteOne(id)
+
+        if (data === null) {
+            return {
+                success: false,
+                errorMessage: "Customer not found.",
+                details: {
+                    id,
+                },
+            }
+        }
 
         return {
             success: true,
+            data,
         }
     }
 }

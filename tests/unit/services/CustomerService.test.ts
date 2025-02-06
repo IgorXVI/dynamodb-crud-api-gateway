@@ -211,31 +211,47 @@ describe("CustomerService tests", () => {
 
     test("should delete one user", async () => {
         const customerService = new CustomerService({
-            softDeleteOne: async () => null,
+            softDeleteOne: async () => "result",
         } as any)
 
         const result: any = await customerService.deleteOne("123")
 
         expect(result).toEqual({
             success: true,
+            data: "result",
+        })
+    })
+
+    test("should return not found error on delete", async () => {
+        const customerService = new CustomerService({
+            softDeleteOne: async () => null,
+        } as any)
+
+        const result: any = await customerService.deleteOne("123456")
+
+        expect(result.success).toEqual(false)
+        expect(result.errorMessage).toEqual("Customer not found.")
+        expect(result.details as any).toEqual({
+            id: "123456",
         })
     })
 
     test("should update a user", async () => {
         const customerService = new CustomerService({
-            update: async () => null,
+            update: async () => "result",
         } as any)
 
         const result: any = await customerService.update("123", correctBody)
 
         expect(result).toEqual({
             success: true,
+            data: "result",
         })
     })
 
     test("should return validation error on update", async () => {
         const customerService = new CustomerService({
-            update: async () => null,
+            update: async () => "result",
         } as any)
 
         correctBody.fullName = 12345 as any
@@ -255,5 +271,19 @@ describe("CustomerService tests", () => {
                 received: "number",
             },
         ])
+    })
+
+    test("should return not found error on update", async () => {
+        const customerService = new CustomerService({
+            update: async () => null,
+        } as any)
+
+        const result: any = await customerService.update("123456", correctBody)
+
+        expect(result.success).toEqual(false)
+        expect(result.errorMessage).toEqual("Customer not found.")
+        expect(result.details as any).toEqual({
+            id: "123456",
+        })
     })
 })

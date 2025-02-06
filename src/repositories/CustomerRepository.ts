@@ -13,8 +13,10 @@ export class CustomerRepository {
     }
 
     async update(id: string, body: any) {
-        if (body.active !== false) {
-            body.active = true
+        const dbRecord = await this.getOne(id)
+
+        if (!dbRecord) {
+            return null
         }
 
         const objKeys = Object.keys(body)
@@ -42,15 +44,18 @@ export class CustomerRepository {
 
         await this.db.send(new UpdateItemCommand(params))
 
-        console.log("Customer updated!")
+        return {
+            ...body,
+            id,
+        }
     }
 
     async softDeleteOne(id: string) {
-        await this.update(id, {
+        const result = await this.update(id, {
             active: false,
         })
 
-        console.log("Customer marked as innactive!")
+        return result
     }
 
     async create(body: any) {
@@ -66,8 +71,6 @@ export class CustomerRepository {
 
         await this.db.send(new PutItemCommand(params))
 
-        console.log("Customer created!")
-
         return id
     }
 
@@ -81,8 +84,6 @@ export class CustomerRepository {
 
         const result = Item ? unmarshall(Item) : null
 
-        console.log("Customer was fetched!")
-
         return result && !result.active ? null : result
     }
 
@@ -92,8 +93,6 @@ export class CustomerRepository {
         }
 
         const { Items, Count } = await this.db.send(new ScanCommand(params))
-
-        console.log("Customers scanned!")
 
         return {
             count: Count,

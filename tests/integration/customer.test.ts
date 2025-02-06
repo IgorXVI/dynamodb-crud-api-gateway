@@ -125,7 +125,7 @@ describe("Customer routes tests", () => {
         expect(resBody.errorMessage).toEqual("Customer not found.")
     })
 
-    test("should create a new customer by PUT", async () => {
+    test("should not create a new customer by PUT", async () => {
         const res = await fetch("http://localhost:3000/dev/customer/1", {
             method: "PUT",
             headers: {
@@ -136,7 +136,11 @@ describe("Customer routes tests", () => {
 
         const resBody = await res.json()
 
-        expect(resBody.success).toEqual(true)
+        expect(resBody.success).toEqual(false)
+        expect(resBody.errorMessage).toEqual("Customer not found.")
+        expect(resBody.details as any).toEqual({
+            id: "1",
+        })
 
         const resGet = await fetch("http://localhost:3000/dev/customer/1", {
             method: "GET",
@@ -147,9 +151,24 @@ describe("Customer routes tests", () => {
 
         const resGetBody = await resGet.json()
 
-        expect(resGetBody.success).toEqual(true)
-        expect(resGetBody.data).toEqual({
-            ...correctBody,
+        expect(resGetBody.success).toEqual(false)
+        expect(resGetBody.errorMessage).toEqual("Customer not found.")
+        expect(resGetBody.details as any).toEqual({
+            id: "1",
+        })
+
+        const resDelete = await fetch("http://localhost:3000/dev/customer/1", {
+            method: "DELETE",
+            headers: {
+                "x-api-key": "d41d8cd98f00b204e9800998ecf8427e",
+            },
+        })
+
+        const resDeleteBody = await resDelete.json()
+
+        expect(resDeleteBody.success).toEqual(false)
+        expect(resDeleteBody.errorMessage).toEqual("Customer not found.")
+        expect(resDeleteBody.details as any).toEqual({
             id: "1",
         })
     })
