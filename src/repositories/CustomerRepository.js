@@ -7,6 +7,9 @@ const dbClient = require("../db/client")
 class CustomerRepository {
     constructor() {
         this.db = dbClient
+
+        this.create = this.create.bind(this)
+        this.getAll = this.getAll.bind(this)
     }
 
     async create(body) {
@@ -21,7 +24,7 @@ class CustomerRepository {
             Item: marshall(body),
         }
 
-        await db.send(new PutItemCommand(params))
+        await this.db.send(new PutItemCommand(params))
 
         console.log("Customer created!")
 
@@ -33,7 +36,7 @@ class CustomerRepository {
             TableName: process.env.DDB_TABLE_NAME,
         }
 
-        const { Items, Count } = await db.send(new ScanCommand(params))
+        const { Items, Count } = await this.db.send(new ScanCommand(params))
 
         console.log("Customers scanned!")
 

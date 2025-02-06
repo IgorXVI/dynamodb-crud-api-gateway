@@ -37,10 +37,13 @@ class CustomerService {
                 )
                 .nonempty(),
         })
+
+        this.create = this.create.bind(this)
+        this.getAll = this.getAll.bind(this)
     }
 
     async create(body) {
-        const validationResult = customerValidationSchema.safeParse(body)
+        const validationResult = this.validationSchema.safeParse(body)
 
         if (!validationResult.success) {
             return {
@@ -111,13 +114,11 @@ class CustomerService {
     }
 
     async getAll() {
-        const allCustomers = await customerRepository.getAll()
+        const data = await this.customerRepository.getAll()
 
         return {
             success: true,
-            data: {
-                allCustomers,
-            },
+            data,
         }
     }
 }

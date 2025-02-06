@@ -1,6 +1,10 @@
 class CustomerController {
     constructor(customerService) {
         this.customerService = customerService
+
+        this.handleError = this.handleError.bind(this)
+        this.create = this.create.bind(this)
+        this.getAll = this.getAll.bind(this)
     }
 
     handleError(e) {
@@ -22,7 +26,7 @@ class CustomerController {
         try {
             const body = JSON.parse(event.body)
 
-            const result = await customerService.create(body)
+            const result = await this.customerService.create(body)
 
             const statusCode = result.success ? 201 : 400
 
@@ -37,7 +41,7 @@ class CustomerController {
 
     async getAll() {
         try {
-            const result = await customerService.getAll()
+            const result = await this.customerService.getAll()
 
             return {
                 statusCode: 200,
