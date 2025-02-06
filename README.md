@@ -9,3 +9,12 @@
 4 - `npx tsc`
 
 5 - `npm run dev`
+
+### Testes
+
+Abaixo serão listados os comandos para executar os testes, para os testes de integração é necessário ter o servidor de dev local rodando (siga o "Setup do ambiente local").
+Os comandos de teste são:
+
+-   Testes unitários: `npm run unit-test`
+-   Testes unitários com cobertura: `npm run unit-test-coverage`
+-   Testes de integração: `npm run integration-test`

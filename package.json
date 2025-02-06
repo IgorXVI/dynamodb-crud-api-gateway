@@ -4,7 +4,9 @@
     "main": "index.js",
     "scripts": {
         "test": "npx jest",
-        "coverage": "npx jest --coverage",
+        "unit-test": "npx jest unit",
+        "unit-test-coverage": "npx jest unit --coverage",
+        "integration-test": "npx jest integration",
         "deploy": "npx sls deploy",
         "aws-purge": "npx sls remove",
         "compile": "tsc --watch",
