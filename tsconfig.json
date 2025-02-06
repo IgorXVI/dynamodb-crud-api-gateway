@@ -17,5 +17,5 @@
         "outDir": "dist"
     },
     "include": ["**/*.ts"],
-    "exclude": ["dist", "node_modules", ".serverless", ".dynamodb", "undefined"]
+    "exclude": ["coverage", "tests", "dist", "node_modules", ".serverless", ".dynamodb", "undefined"]
 }
