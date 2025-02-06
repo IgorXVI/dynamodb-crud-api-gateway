@@ -20,4 +20,4 @@ Os comandos de teste são:
 -   Testes unitários com cobertura: `npm run unit-test-coverage`
 -   Testes de integração: `npm run integration-test`
 
-Se necessário, o valor de "x-api-key", dentro dos headers das requisições nos testes de integração, devem ser mudados para o valor que aparece quando o servidor local é iniciado na sua máquina.
+Se necessário, os valor de "x-api-key", dentro dos headers das requisições nos testes de integração, deve ser mudado para o valor que aparece quando o servidor local é iniciado na sua máquina.
