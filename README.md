@@ -28,4 +28,4 @@ Se necessário, o valor de "x-api-key" dentro dos headers das requisições nos 
 
 ### Exemplos
 
-Para acessar as rotas pelo Postman é necessário utilizar a chave de API mostrada no print da seção "Testes", exemplos de como executar as requisições no Postman: https://documenter.getpostman.com/view/3176597/2sAYX8HLtD
+Para acessar as rotas pelo Postman é necessário utilizar a chave de API mostrada no print da seção "Testes", lembrar também de mudar os IDs que estão nas rotas de exemplo, use o ID que é retornado depois da execução da rota de POST. Exemplos de como executar as requisições no Postman: https://documenter.getpostman.com/view/3176597/2sAYX8HLtD
