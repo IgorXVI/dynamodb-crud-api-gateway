@@ -26,6 +26,6 @@ If necessary, the value of "x-api-key" within the request headers in the integra
 
 ![alt text](image.png)
 
-### Exemplos
+### Examples
 
 To access the routes through Postman, you must use the API key shown in the print of the "Tests" section. Remember to also change the IDs that are in the example routes, use the ID that is returned after executing the POST route. Examples of how to execute requests in Postman: https://documenter.getpostman.com/view/3176597/2sAYX8HLtD
