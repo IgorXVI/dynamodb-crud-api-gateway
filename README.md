@@ -1,6 +1,6 @@
-### Setup do ambiente local
+### Local environment setup
 
-Abrir o terminal na raíz do repositório e executar esses comandos (necessário ter nodejs e npm instalados):
+Open the terminal at the root of the repository and run these commands (you must have nodejs and npm installed):
 
 1 - `npm i`
 
@@ -12,20 +12,20 @@ Abrir o terminal na raíz do repositório e executar esses comandos (necessário
 
 5 - `npm run dev`
 
-### Testes
+### Tests
 
-Abaixo serão listados os comandos para executar os testes, para os testes de integração é necessário ter o servidor de dev local rodando (siga o "Setup do ambiente local").
-Os comandos de teste são:
+Below are the commands to run the tests. For integration tests, you need to have the local dev server running (follow the "Local environment setup").
+The test commands are:
 
--   Todos os testes com cobertura: `npm run test`
--   Testes unitários: `npm run unit-test`
--   Testes unitários com cobertura: `npm run unit-test-coverage`
--   Testes de integração: `npm run integration-test`
+-   All tests with coverage: `npm run test`
+-   Unit tests: `npm run unit-test`
+-   Unit tests with coverage: `npm run unit-test-coverage`
+-   Integration tests: `npm run integration-test`
 
-Se necessário, o valor de "x-api-key" dentro dos headers das requisições nos testes de integração deve ser mudado para o valor que aparece no terminal quando o servidor local é iniciado na sua máquina, exemplo:
+If necessary, the value of "x-api-key" within the request headers in the integration tests should be changed to the value that appears in the terminal when the local server is started on your machine, for example:
 
 ![alt text](image.png)
 
 ### Exemplos
 
-Para acessar as rotas pelo Postman é necessário utilizar a chave de API mostrada no print da seção "Testes", lembrar também de mudar os IDs que estão nas rotas de exemplo, use o ID que é retornado depois da execução da rota de POST. Exemplos de como executar as requisições no Postman: https://documenter.getpostman.com/view/3176597/2sAYX8HLtD
+To access the routes through Postman, you must use the API key shown in the print of the "Tests" section. Remember to also change the IDs that are in the example routes, use the ID that is returned after executing the POST route. Examples of how to execute requests in Postman: https://documenter.getpostman.com/view/3176597/2sAYX8HLtD
